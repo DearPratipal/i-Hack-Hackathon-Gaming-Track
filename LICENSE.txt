@@ -1,0 +1,27 @@
+Custom License for Responsible Gaming Platform
+
+Copyright (c) 2025, PRATIPAL KUMAR SINGH (E-Cell Creative Member)
+
+1. Grant of License
+   - You are granted a non-exclusive, non-transferable license to use, modify, and distribute the software for non-commercial purposes.
+
+2. Restrictions
+   - You may not sell, lease, or sublicense the software.
+   - You must not use the software for any illegal activities or to harm others.
+   - You must not redistribute the software without crediting the original author.
+
+3. Attribution
+   - You must include a copy of this license in any distribution of the software and provide appropriate credit to the author.
+
+4. Limitation of Liability
+   - The software is provided "as-is," without warranty of any kind. The author shall not be held liable for any damages resulting from the use of this software.
+
+5. Termination
+   - This license will be terminated if you violate any terms outlined herein.
+
+6. Other Terms
+   - Any changes to this license or software must be approved by the original author.
+
+---
+
+By using this software, you agree to the terms of this custom license.
