@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -7,11 +7,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'mysecretkey'
 db = SQLAlchemy(app)
 
-# Database models
+# Database Models
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), nullable=False, unique=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
+    role = db.Column(db.String(20), default='user')  # 'admin' or 'user'
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,29 +21,25 @@ class Report(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     user = db.relationship('User', backref='reports')
 
-# Home Route
 @app.route('/')
 def home():
     return render_template('index.html')
 
-# Signup Route
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         hashed_password = generate_password_hash(password, method='sha256')
-        new_user = User(username=username, password=hashed_password)
 
+        new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
         flash('Account created successfully!', 'success')
         return redirect(url_for('login'))
-    
     return render_template('signup.html')
 
-# Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -52,14 +49,19 @@ def login():
 
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
-            flash('Login successful!', 'success')
+            session['role'] = user.role
             return redirect(url_for('home'))
         else:
             flash('Invalid credentials', 'danger')
-    
+
     return render_template('login.html')
 
-# Report Issue Route
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Logged out successfully!', 'info')
+    return redirect(url_for('login'))
+
 @app.route('/report', methods=['GET', 'POST'])
 def report():
     if 'user_id' not in session:
@@ -79,7 +81,15 @@ def report():
 
     return render_template('report.html')
 
-# Running the Application
+@app.route('/admin')
+def admin_dashboard():
+    if 'role' not in session or session['role'] != 'admin':
+        flash('Access denied!', 'danger')
+        return redirect(url_for('home'))
+
+    reports = Report.query.all()
+    return render_template('dashboard.html', reports=reports)
+
 if __name__ == '__main__':
-    db.create_all()  # Create all the database tables if they do not exist
+    db.create_all()
     app.run(debug=True)

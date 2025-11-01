@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Admin Dashboard</title></head>
+<body>
+    <h1>Reported Issues</h1>
+    <table>
+        <tr><th>ID</th><th>Type</th><th>Description</th><th>User ID</th></tr>
+        {% for report in reports %}
+        <tr>
+            <td>{{ report.id }}</td>
+            <td>{{ report.report_type }}</td>
+            <td>{{ report.description }}</td>
+            <td>{{ report.user_id }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
